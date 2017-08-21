@@ -1,0 +1,23 @@
+{
+  "name": "eventsystemx",
+  "version": "0.1.0",
+  "description": "",
+  "main": "eventsystem.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gvr37leo/eventsystem.git"
+  },
+  "keywords": [
+    "event",
+    "eventsystem"
+  ],
+  "author": "paul boon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gvr37leo/eventsystem/issues"
+  },
+  "homepage": "https://github.com/gvr37leo/eventsystem#readme"
+}
