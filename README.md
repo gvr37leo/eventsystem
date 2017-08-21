@@ -8,7 +8,7 @@ class Player{
         this.deathEvent = new EventSystem()
         this.health = new Box(100)
         
-        this.health.listen((value) => {
+        this.health.onchange.listen((value) => {
             if(value < 0){
                 deathEvent.trigger()
             }
