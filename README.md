@@ -10,7 +10,7 @@ class Player{
         
         this.health.onchange.listen((value) => {
             if(value < 0){
-                deathEvent.trigger()
+                this.deathEvent.trigger()
             }
         })
     }
