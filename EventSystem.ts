@@ -29,7 +29,8 @@ class Box<T>{
     }
 
     clear() {
-        this.isSet = false;
+        this.isSet = false
+        this.set(null)
         this.onClear.trigger(0)
     }
 }
