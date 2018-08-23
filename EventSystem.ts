@@ -35,7 +35,6 @@ class Box<T>{
     }
 }
 
-
 class EventSystem<T>{
     callbacks: ((val: T) => void)[] = []
 
@@ -54,6 +53,51 @@ class EventSystem<T>{
     trigger(value: T) {
         for (var callback of this.callbacks) {
             callback(value)
+        }
+    }
+}
+
+class EventSystemVoid{
+    callbacks: (() => void)[] = []
+
+    constructor() {
+
+    }
+
+    listen(callback: () => void) {
+        this.callbacks.push(callback)
+    }
+
+    deafen(callback: () => void) {
+        this.callbacks.splice(this.callbacks.findIndex(v => v === callback), 1)
+    }
+
+    trigger() {
+        for (var callback of this.callbacks) {
+            callback()
+        }
+    }
+}
+
+class ObjectBox<T>{
+    val:T
+    isSet: boolean = false
+    onChange:EventSystemVoid
+
+    constructor(val:T){
+        this.val = val
+    }
+
+    get<V>(selector:(obj:T) => Box<V>):V{
+        return selector(this.val).get()
+    }
+
+    set<V>(selector:(obj:T) => Box<V>, val:V){
+        var old = selector(this.val)
+        old.set(val)
+        if(old.get() != val || !this.isSet){
+            this.isSet = true
+            this.onChange.trigger()
         }
     }
 }
