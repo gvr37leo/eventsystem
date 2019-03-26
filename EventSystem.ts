@@ -1,15 +1,13 @@
 class Box<T>{
     onchange: EventSystem<T>
-    onOldChange: EventSystem<T>
-    onClear: EventSystem<any>
+    onClear: EventSystemVoid
     value: T
     isSet: boolean = false
 
     constructor(value: T) {
         this.onchange = new EventSystem();
-        this.onOldChange = new EventSystem();
         this.value = value
-        this.onClear = new EventSystem();
+        this.onClear = new EventSystemVoid();
     }
 
     get(): T {
@@ -22,8 +20,7 @@ class Box<T>{
         if (old != value || !this.isSet) {
             this.isSet = true;
             if (!silent) {
-                this.onchange.trigger(this.value)
-                this.onOldChange.trigger(old)
+                this.onchange.trigger(this.value,old)
             }
         }
     }
@@ -31,28 +28,28 @@ class Box<T>{
     clear() {
         this.isSet = false
         this.set(null)
-        this.onClear.trigger(0)
+        this.onClear.trigger()
     }
 }
 
 class EventSystem<T>{
-    callbacks: ((val: T) => void)[] = []
+    callbacks: ((val: T, old:T) => void)[] = []
 
     constructor() {
 
     }
 
-    listen(callback: (val: T) => void) {
+    listen(callback: (val: T, old:T) => void) {
         this.callbacks.push(callback)
     }
 
-    deafen(callback: (val: T) => void) {
+    deafen(callback: (val: T, old:T) => void) {
         this.callbacks.splice(this.callbacks.findIndex(v => v === callback), 1)
     }
 
-    trigger(value: T) {
+    trigger(value: T, old:T) {
         for (var callback of this.callbacks) {
-            callback(value)
+            callback(value,old)
         }
     }
 }
@@ -98,6 +95,45 @@ class ObjectBox<T>{
         if(old.get() != val || !this.isSet){
             this.isSet = true
             this.onChange.trigger()
+        }
+    }
+}
+
+class PEvent<T>{
+    handled = false
+
+    constructor(public val:T){
+
+    }
+}
+
+class PBox<T>{
+    private box:Box<PEvent<T>>
+    onchange:EventSystem<PEvent<T>>
+
+    constructor(val:T){
+        this.box = new Box(new PEvent(val))
+        this.onchange = this.box.onchange
+    }
+
+    get():T{
+        return this.box.value.val
+    }
+
+    set(v:T){
+        var e = new PEvent(v)
+        e.handled = false
+        this.box.set(e)
+    }
+
+    setS(e:PEvent<T>){
+        this.box.set(e)
+    }
+
+    setH(e:PEvent<T>){
+        if(!e.handled){
+            e.handled = true
+            this.setS(e)
         }
     }
 }
